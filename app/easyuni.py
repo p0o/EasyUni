@@ -1,10 +1,15 @@
 
 from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort
+from pymongo import MongoClient
 import os
 
 app = Flask(__name__)
 app.secret_key = 'This is a secret key for us!!'
+
+client = MongoClient()
+db = client.easyuni_db
+users = db.users
  
 @app.route('/')
 def home():
