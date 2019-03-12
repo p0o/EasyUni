@@ -22,18 +22,23 @@ def home():
 @app.route('/logout')
 def logout():
 	if session.get('logged_in'):
-		del session['logged_in']
-		del session['fullname']
-		del session['username']
-		del session['password']
+		session['logged_in'] = False
+		session['fullname'] = None
+		session['username'] = None
+		session['password'] = None
 	return 'Logged out!'
  
 @app.route('/login', methods=['POST'])
 def login_applicant():
-	user = users.find_one({'username': request.form['username']});
-	if request.form['password'] == user['password']:
-		session['logged_in'] = True
+	try :
+		user = users.find_one({'username': request.form['username']});
+		if request.form['password'] == user['password']:
+			session['logged_in'] = True
+			session['fullname'] = user['fullname']
+			return redirect(url_for('home'))
+	except:
 		return redirect(url_for('home'))
+
 
 
 @app.route('/signup', methods=['POST', 'GET'])
