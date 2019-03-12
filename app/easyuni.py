@@ -67,3 +67,46 @@ def signup_applicant():
 	if request.method == 'GET':
 		session['signup_step'] = 1
 		return render_template('signup_step1.html')
+
+# only to create sample data in database
+# to support use cases that are not covered yet
+@app.route('/init')
+def addSampleData():
+	db.universities.insert_one({
+		'universityName': 'Help University',
+		'uniAdmins': [],
+		'programmes': [
+			{
+				'programmeName': 'Bachelor of IT',
+				'description': 'Bachelor of IT is a great academic opportunity for students interested in computer science and career opportunities in programming and e-commerce.',
+				'closingDate': '12/03/2020'
+			},
+			{
+				'programmeName': 'Bachelor of Business',
+				'description': 'Bachelor of Business is a great academic opportunity for students interested in learning business and career opportunities in executive positions and office admin.',
+				'closingDate': '12/05/2020'
+			},
+			{
+				'programmeName': 'Bachelor of Marketing',
+				'description': 'Bachelor of Marketing is a great academic opportunity for students interested in markets, selling products and career opportunities in marketing and e-commerce.',
+				'closingDate': '12/01/2020'
+			},
+		]
+	});
+	db.universities.insert_one({
+		'universityName': 'Taylor University',
+		'uniAdmins': [],
+		'programmes': [
+			{
+				'programmeName': 'Bachelor of Business',
+				'description': 'Bachelor of Business is a great academic opportunity for students interested in learning business and career opportunities in executive positions and office admin.',
+				'closingDate': '04/06/2020'
+			},
+			{
+				'programmeName': 'Bachelor of Marketing',
+				'description': 'Bachelor of Marketing is a great academic opportunity for students interested in markets, selling products and career opportunities in marketing and e-commerce.',
+				'closingDate': '04/02/2020'
+			},
+		]
+	});
+	return 'Sample collections created!'
