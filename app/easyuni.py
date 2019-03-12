@@ -18,6 +18,15 @@ def home():
 		return render_template('login.html')
 	else:
 		return render_template('dashboard.html')
+
+@app.route('/logout')
+def logout():
+	if session.get('logged_in'):
+		del session['logged_in']
+		del session['fullname']
+		del session['username']
+		del session['password']
+	return 'Logged out!'
  
 @app.route('/login', methods=['POST'])
 def login_applicant():
@@ -26,7 +35,6 @@ def login_applicant():
 		session['logged_in'] = True
 		return redirect(url_for('home'))
 
-	return home()
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup_applicant():
