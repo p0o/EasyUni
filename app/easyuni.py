@@ -1,8 +1,9 @@
 
-from flask import Flask
+
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
 from pymongo import MongoClient
-import os
+from bson.objectid import ObjectId
+
 import logging
 
 app = Flask(__name__)
@@ -10,7 +11,10 @@ app.secret_key = 'This is a secret key for us!!'
 
 client = MongoClient()
 db = client.easyuni_db
+#collections
 users = db.users
+qualifications = db.qualifications
+admins = db.admins
 
 @app.route('/')
 def home():
@@ -19,6 +23,7 @@ def home():
 	else:
 		return render_template('dashboard.html')
 
+#pooriya
 @app.route('/logout')
 def logout():
 	if session.get('logged_in'):
@@ -27,7 +32,7 @@ def logout():
 		session['username'] = None
 		session['password'] = None
 	return 'Logged out!'
- 
+
 @app.route('/login', methods=['POST'])
 def login_applicant():
 	try :
@@ -67,3 +72,105 @@ def signup_applicant():
 	if request.method == 'GET':
 		session['signup_step'] = 1
 		return render_template('signup_step1.html')
+
+
+#Rasul
+@app.route('/admin/logoutAdmin')
+def adminLogout():
+	if session.get('admin_logged_in'):
+		session['admin_logged_in'] = False
+		session['adminLoginError'] = False
+		return redirect(url_for('adminHome'))
+
+
+#setupQualification.html
+@app.route("/admin/setupQual") #loading from db for adding
+def setupQual():
+    qualifications = db.qualifications.find()
+    return render_template('setupQualification.html', qualifications=qualifications)
+
+@app.route("/admin/setupQual/update" , methods = ['POST']) #Updating Qualification after "save" button
+def loadQualToUpdate():
+    updateBtnId = request.form['id']
+    foundQual = {"_id": ObjectId(updateBtnId)}
+    updateQualifications = db.qualifications.find_one=(foundQual)
+
+    qualName = request.form['qualNameUpdate']
+    calc = request.form['calculationUpdate']
+    minScore = request.form['minScoreUpdate']
+    maxScore = request.form['maxScoreUpdate']
+
+    updateDB = {
+        "$set": {
+            "qualificationName": qualName,
+            "calculation": calc,
+            "minimumScore": minScore,
+            "maximumScore": maxScore
+        }
+    }
+    db.qualifications.update(updateQualifications, updateDB)
+    return redirect(url_for('setupQual'))
+
+@app.route("/admin/setupQual/add", methods = ['POST'])   #addding Qualification to db from modal
+def addQualification():
+
+    qualName = request.form['qualName']
+    calc = request.form['calculation']
+    minScore = request.form['minScore']
+    maxScore = request.form['maxScore']
+
+    addToDB = {
+            "qualificationName": qualName,
+            "calculation": calc,
+            "minimumScore": minScore,
+            "maximumScore": maxScore
+        }
+    db.qualifications.insert_one(addToDB)
+    return redirect(url_for('setupQual'))
+
+#login for admin
+@app.route('/admin')
+def adminHome():
+	if session.get('admin_logged_in'):
+		return redirect(url_for('setupQual'))
+	else:
+		if session.get('adminLoginError'):
+			error = "Invalid credentials, try again!"
+			return render_template('loginAdmin.html', error=error)
+		else:
+			return render_template('loginAdmin.html')
+
+@app.route('/admin/login', methods=['POST'])
+def login_admin():
+	try:
+		theAdmin = admins.find_one({'username': request.form['adminUsername']});
+		if request.form['adminPassword'] == theAdmin['password']:
+			session['admin_logged_in'] = True
+			return redirect(url_for('adminHome'))
+		else:
+			session['adminLoginError'] = True
+			return redirect(url_for('adminHome'))
+
+	except:
+		session['adminLoginError'] = True
+		return redirect(url_for('adminHome'))
+
+#RegisterUniverisity.html
+"""@app.route("/registerUni") #loading from db for adding
+def registerUni():
+    university = db.universities.find()
+    return render_template('registerUniversity.html', university=university)
+
+@app.route("/setupQual/add", methods = ['POST'])   #addding Qualification to db from modal
+def addUniversity():
+
+    uniName = request.form['qualName']
+    numOfAdmins = 0
+    uniAdmins = 0
+
+    addToDB = {
+            "qualificationName": qualName,
+        }
+    db.qualifications.insert_one(addToDB)
+    return redirect(url_for('setupQual'))
+"""
