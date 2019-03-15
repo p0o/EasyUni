@@ -32,7 +32,7 @@ def logout():
 		session['fullname'] = None
 		session['username'] = None
 		session['password'] = None
-	return 'Logged out!'
+	return redirect(url_for('home'));
 
 
 @app.route('/login', methods=['POST', 'GET'])
