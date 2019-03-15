@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Setup Qualification</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+{% block content %}
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="#">EasyUni</a>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Maintain Qualification <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Add University</a>
+            </li>
+        </ul>
+        <a href="logoutAdmin"><input type="submit" class="btn btn-danger my-2 my-sm-0" name="logoutAdmin" value="Log out"></a>
+  </div>
+</nav>
+<div class="container" id="makeEditable">
+    <br><br><br><br>
+    <center><input type="button" class="btn btn-success" data-target="#exampleModalCenter" data-toggle="modal" id="addQualificaionBtn" value="Add New Qualification"></center>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create Qualification</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="setupQual/add">
+                        <div class="form-group">
+                            <label>Qualification Name</label>
+                            <input type="text" class="form-control" name="qualName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Calculation of result by average of how many subjects: </label>
+                            <select multiple class="form-control" name="calculation" required>
+                                <option>1 subject</option>
+                                <option>2 subjects</option>
+                                <option>3 subjects</option>
+                                <option>4 subjects</option>
+                                <option>5 subjects</option>
+                                <option>6 subjects</option>
+                                <option>7 subjects</option>
+                                <option>8 subjects</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Minimum Score</label>
+                            <input type="number" class="form-control" name="minScore" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Maximum Score</label>
+                            <input type="number" class="form-control" name="maxScore" required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" value="Add Qualification">
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Qualification</th>
+            <th>Calculation of overall result</th>
+            <th>Minimum Score</th>
+            <th>Maximum Score</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for qual in qualifications %}
+        <tr>
+            <td>{{ qual.qualificationName }}</td>
+            <td>{{ qual.calculation }}</td>
+            <td>{{ qual.minimumScore }}</td>
+            <td>{{ qual.maximumScore }}</td>
+            <td>
+                <!-- Button trigger modal -->
+                <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#id{{qual._id}}">Update</button>
+                <!-- Modal -->
+                <div class="modal fade" id="id{{qual._id}}" tabindex="-1" role="dialog" aria-labelledby="updateModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLongTitle">Update Qualification</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="setupQual/update">
+                                    <div class="form-group">
+                                        <label>Qualification Name</label>
+                                        <input type="text" class="form-control" name="qualNameUpdate" value="{{qual.qualificationName}}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Calculation of result by average of how many subjects: </label>
+                                        <select multiple class="form-control" name="calculationUpdate" value="{{qual.calculation}}">
+                                            <option>1 subject</option>
+                                            <option>2 subjects</option>
+                                            <option>3 subjects</option>
+                                            <option>4 subjects</option>
+                                            <option>5 subjects</option>
+                                            <option>6 subjects</option>
+                                            <option>7 subjects</option>
+                                            <option>8 subjects</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Minimum Score</label>
+                                        <input value="{{ qual.minimumScore }}" type="number" class="form-control" name="minScoreUpdate" placeholder="Enter number(s) only" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Maximum Score</label>
+                                        <input value="{{ qual.maximumScore }}" type="number" class="form-control" name="maxScoreUpdate" placeholder="Enter number(s) only" required>
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <input type="hidden" name="id" value="{{ qual._id }}" />
+                                <input type="submit" class="btn btn-primary" name="saveBtnWithIdForUpdate" value="Save">
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
