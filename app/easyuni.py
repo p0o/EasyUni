@@ -15,10 +15,6 @@ db = client.easyuni_db
 #collections
 users = db.users
 
-qualifications = db.qualifications
-admins = db.admins
-universities = db.universities
-
 
 @app.route('/')
 def home():
@@ -186,24 +182,48 @@ def login_admin():
 		return redirect(url_for('adminHome'))
 
 #RegisterUniverisity.html
-"""@app.route("/registerUni") #loading from db for adding
+@app.route("/admin/registerUni") #loading from db for adding
 def registerUni():
-    university = db.universities.find()
-    return render_template('registerUniversity.html', university=university)
+	universities = db.universities.find()
+	return render_template('registerUni.html', universities=universities)
 
-@app.route("/setupQual/add", methods = ['POST'])   #addding Qualification to db from modal
-def addUniversity():
+@app.route("/admin/registerUni/addUni", methods = ['POST'])   #addding Qualification to db from modal
+def registerUniversity():
+	getUniName = request.form['uniName']
 
-    uniName = request.form['qualName']
-    numOfAdmins = 0
-    uniAdmins = 0
-
-    addToDB = {
-            "qualificationName": qualName,
+	addToDB = {
+            "uniName": getUniName
         }
-    db.qualifications.insert_one(addToDB)
-    return redirect(url_for('setupQual'))
-"""
+	db.universities.insert_one(addToDB)
+	return redirect(url_for('registerUni'))
+
+@app.route("/admin/registerUni/addUniAdmin", methods = ['POST'])   #addding Qualification to db from modal
+def addUniAdmin():
+	addUniAdminBtn = request.form['uniId']
+	foundUni = {"_id": ObjectId(addUniAdminBtn)}
+	addUniAdminId = db.universities.find_one = (foundUni)
+
+	getAdminName = request.form['name']
+	getAdminUsername = request.form['username']
+	getAdminEmail = request.form['email']
+	getAdminPassword = request.form['password']
+
+	addToDB = {
+		"$push":
+			{"uniAdmins":
+				{
+					"name": getAdminName,
+					"email": getAdminEmail,
+					"username": getAdminUsername,
+					"password": getAdminPassword
+				}
+
+			}
+	}
+
+	db.universities.update(addUniAdminId, addToDB)
+	return redirect(url_for('registerUni'))
+
 
 # only to create sample data in database
 # to support use cases that are not covered yet
