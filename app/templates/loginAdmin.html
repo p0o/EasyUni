@@ -20,7 +20,7 @@
                             <center><h3 class="mb-0">Login</h3></center>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="admin/login" class="needs-validation" >
+                            <form method="POST" action="admin/login" class="needs-validation">
                                 <div class="form-group">
                                     <label for="uname1">Username</label>
                                     <input type="text" class="form-control form-control-lg" name="adminUsername" id="uname1" required>
@@ -36,7 +36,23 @@
                                     <p class="error">{{ error }}</p>
                                 </div>
                                 {% endif %}
-                                <button type="submit" class="btn btn-success btn-lg float-right">Login</button>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="custom-control custom-radio col-sm-4">
+                                            <input type="radio" class="custom-control-input" id="defaultUnchecked" name="adminRBtn">
+                                            <label class="custom-control-label" for="defaultUnchecked">University Admin</label>
+                                        </div>
+
+                                        <!-- Default checked -->
+                                        <div class="custom-control custom-radio col-sm-4">
+                                            <input type="radio" class="custom-control-input" id="defaultChecked" name="adminRBtn" checked>
+                                            <label class="custom-control-label" for="defaultChecked">EasyUni Admin</label>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button type="submit" class="btn btn-success btn-lg">Login</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div><!--/card-block-->
                     </div><!-- /form card login -->

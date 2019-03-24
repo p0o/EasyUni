@@ -14,7 +14,7 @@ client = MongoClient()
 db = client.easyuni_db
 #collections
 users = db.users
-
+admins = db.admins
 
 @app.route('/')
 def home():
@@ -101,11 +101,36 @@ def signup_applicant():
 		return render_template('signup_step1.html')
 
 #Rasul
-@app.route('/admin/logoutAdmin')
-def adminLogout():
+@app.route('/admin/logoutAdmin', methods=['POST', 'GET'])
+def adminLogout(): #Check if admin is logged in
 	if session.get('admin_logged_in'):
 		session['admin_logged_in'] = False
 		session['adminLoginError'] = False
+		return redirect(url_for('adminHome'))
+
+#login for admin
+@app.route('/admin', methods=['POST', 'GET'])
+def adminHome():
+	if session.get('admin_logged_in'):
+		return redirect(url_for('setupQual'))
+	else:
+		if session.get('adminLoginError'): #if admin entered wrong credentials
+			error = "Invalid credentials, try again!"
+			return render_template('loginAdmin.html', error=error)
+		else:
+			return render_template('loginAdmin.html') #if first time
+
+@app.route('/admin/login', methods=['POST', 'GET'])
+def login_admin():
+	theAdmin = admins.find_one({
+		'username': request.form['adminUsername'],
+		'password': request.form['adminPassword']
+	});
+	if theAdmin != None:
+		session['admin_logged_in'] = True
+		return redirect(url_for('adminHome'))
+	else:
+		session['adminLoginError'] = True
 		return redirect(url_for('adminHome'))
 
 
@@ -154,32 +179,6 @@ def addQualification():
     db.qualifications.insert_one(addToDB)
     return redirect(url_for('setupQual'))
 
-#login for admin
-@app.route('/admin')
-def adminHome():
-	if session.get('admin_logged_in'):
-		return redirect(url_for('setupQual'))
-	else:
-		if session.get('adminLoginError'):
-			error = "Invalid credentials, try again!"
-			return render_template('loginAdmin.html', error=error)
-		else:
-			return render_template('loginAdmin.html')
-
-@app.route('/admin/login', methods=['POST'])
-def login_admin():
-	try:
-		theAdmin = admins.find_one({'username': request.form['adminUsername']});
-		if request.form['adminPassword'] == theAdmin['password']:
-			session['admin_logged_in'] = True
-			return redirect(url_for('adminHome'))
-		else:
-			session['adminLoginError'] = True
-			return redirect(url_for('adminHome'))
-
-	except:
-		session['adminLoginError'] = True
-		return redirect(url_for('adminHome'))
 
 #RegisterUniverisity.html
 @app.route("/admin/registerUni") #loading from db for adding
