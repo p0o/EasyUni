@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 
 import logging
 import bson
+from bson.son import SON
 
 app = Flask(__name__)
 app.secret_key = 'This is a secret key for us!!'
@@ -15,6 +16,7 @@ db = client.easyuni_db
 #collections
 users = db.users
 admins = db.admins
+universities = db.universities
 
 @app.route('/')
 def home():
@@ -106,13 +108,16 @@ def adminLogout(): #Check if admin is logged in
 	if session.get('admin_logged_in'):
 		session['admin_logged_in'] = False
 		session['adminLoginError'] = False
+		session['uniAdmin_logged_in'] = False
 		return redirect(url_for('adminHome'))
 
-#login for admin
+#login for admin part1
 @app.route('/admin', methods=['POST', 'GET'])
-def adminHome():
+def adminHome():#this is needed for handling error
 	if session.get('admin_logged_in'):
 		return redirect(url_for('setupQual'))
+	elif session.get('uniAdmin_logged_in'):
+		return redirect(url_for('addProgramme'))
 	else:
 		if session.get('adminLoginError'): #if admin entered wrong credentials
 			error = "Invalid credentials, try again!"
@@ -120,18 +125,41 @@ def adminHome():
 		else:
 			return render_template('loginAdmin.html') #if first time
 
+#login for admin part2
 @app.route('/admin/login', methods=['POST', 'GET'])
 def login_admin():
-	theAdmin = admins.find_one({
-		'username': request.form['adminUsername'],
-		'password': request.form['adminPassword']
-	});
-	if theAdmin != None:
-		session['admin_logged_in'] = True
-		return redirect(url_for('adminHome'))
-	else:
-		session['adminLoginError'] = True
-		return redirect(url_for('adminHome'))
+
+	if request.form['adminRBtn'] == "adminRadio": #if admin radio is selected(not uniAdmin)
+		theAdmin = admins.find_one({
+			'username': request.form['adminUsername'],
+			'password': request.form['adminPassword']
+		});
+		if theAdmin != None:
+			session['admin_logged_in'] = True
+			return redirect(url_for('adminHome'))
+		else:
+			session['adminLoginError'] = True
+			return redirect(url_for('adminHome'))
+	else:#find(match) uniAdmin from universities db
+		uniAdmin = universities.find_one({
+			"uniAdmins": {"$elemMatch": {
+					'username': request.form['adminUsername'],
+					'password': request.form['adminPassword']
+			}}
+		})
+		if uniAdmin != None:
+			session['uniAdmin_logged_in'] = True
+			session['uniAdmin_uniName'] = uniAdmin.uniName #storing name of uni to display
+			session['uniAdmin_name'] = uniAdmin.uniAdmins.name #storeing name of admin to display later
+			return redirect(url_for('adminHome'))
+		else:
+			session['adminLoginError'] = True
+			return redirect(url_for('adminHome'))
+
+#addProgramme.html
+@app.route("/admin/addProgramme") #loading from db for adding
+def addProgramme():
+    return render_template('addProgramme.html', uniName=session.get('uniAdmin_uniName'))
 
 
 #setupQualification.html
