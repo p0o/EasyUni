@@ -105,7 +105,7 @@ def signup_applicant():
 #Rasul
 @app.route('/admin/logoutAdmin', methods=['POST', 'GET'])
 def adminLogout(): #Check if admin is logged in
-	if session.get('admin_logged_in'):
+	if session.get('admin_logged_in') or session.get('uniAdmin_logged_in'):
 		session['admin_logged_in'] = False
 		session['adminLoginError'] = False
 		session['uniAdmin_logged_in'] = False
@@ -141,16 +141,27 @@ def login_admin():
 			session['adminLoginError'] = True
 			return redirect(url_for('adminHome'))
 	else:#find(match) uniAdmin from universities db
-		uniAdmin = universities.find_one({
+		uni = universities.find_one({
 			"uniAdmins": {"$elemMatch": {
 					'username': request.form['adminUsername'],
 					'password': request.form['adminPassword']
 			}}
 		})
-		if uniAdmin != None:
+		if uni != None:
 			session['uniAdmin_logged_in'] = True
-			session['uniAdmin_uniName'] = uniAdmin.uniName #storing name of uni to display
-			session['uniAdmin_name'] = uniAdmin.uniAdmins.name #storeing name of admin to display later
+			session['uniNameForAdmin'] = uni["uniName"] #storing name of uni to display
+			uniAdminList = uni["uniAdmins"]
+			uniAdminName = ""
+			uniAdminEmail = ""
+			uniAdminUsername = ""
+			for uniAdmin in uniAdminList:
+				if uniAdmin["username"] == request.form['adminUsername']:
+					uniAdminName = uniAdmin["name"]
+					uniAdminEmail = uniAdmin["email"]
+					uniAdminUsername = uniAdmin["username"]
+			session['adminNameForAdmin'] = uniAdminName #storing name of admin
+			session['adminEmailForAdmin'] = uniAdminEmail  # storing name of admin
+			session['adminUsernameForAdmin'] = uniAdminUsername  # storing name of admin
 			return redirect(url_for('adminHome'))
 		else:
 			session['adminLoginError'] = True
@@ -159,7 +170,7 @@ def login_admin():
 #addProgramme.html
 @app.route("/admin/addProgramme") #loading from db for adding
 def addProgramme():
-    return render_template('addProgramme.html', uniName=session.get('uniAdmin_uniName'))
+    return render_template('addProgramme.html')
 
 
 #setupQualification.html
@@ -300,3 +311,5 @@ def addSampleData():
 	});
 	return 'Sample collections created!'
 
+if __name__ == '__main__':
+	app.run(debug=True)

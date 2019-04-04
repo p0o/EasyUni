@@ -22,9 +22,43 @@
 </nav>
 <br><br>
 <div class="container">
-    <div class="jumbotron">
-        <h1 class="display-4">{{uniName}}</h1>
-        <h3 class="lead">{{uniAdminName}}</h3> <br><br>
+    <div class="row">
+        <div class="jumbotron col-md-6">
+            <center><h1 class="display-4">{{session.get('uniNameForAdmin')}}</h1></center>
+            <h3 class="lead">Here will be description about the University</h3>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="jumbotron col-md-5">
+            <center><h1 class="display-4">Welcome {{session.get('adminNameForAdmin')}}</h1></center>
+            <h3 class="lead">Username: <b>{{session.get('adminUsernameForAdmin')}}</b></h3>
+            <h3 class="lead">Email: <b>{{session.get('adminEmailForAdmin')}}</b></h3>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Button trigger modal -->
+        <center><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Record Programme</button></center>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Register University</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" action="registerUni/addUni">
+                        <div class="modal-body">
+                            <input name="uniName" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="University Name">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Add Programme">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
