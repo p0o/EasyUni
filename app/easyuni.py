@@ -117,7 +117,7 @@ def adminHome():#this is needed for handling error
 	if session.get('admin_logged_in'):
 		return redirect(url_for('setupQual'))
 	elif session.get('uniAdmin_logged_in'):
-		return redirect(url_for('addProgramme'))
+		return redirect(url_for('recordProgramme'))
 	else:
 		if session.get('adminLoginError'): #if admin entered wrong credentials
 			error = "Invalid credentials, try again!"
@@ -166,12 +166,6 @@ def login_admin():
 		else:
 			session['adminLoginError'] = True
 			return redirect(url_for('adminHome'))
-
-#addProgramme.html
-@app.route("/admin/addProgramme") #loading from db for adding
-def addProgramme():
-    return render_template('addProgramme.html')
-
 
 #setupQualification.html
 @app.route("/admin/setupQual") #loading from db for adding
@@ -225,7 +219,7 @@ def registerUni():
 	universities = db.universities.find()
 	return render_template('registerUni.html', universities=universities)
 
-@app.route("/admin/registerUni/addUni", methods = ['POST'])   #addding Qualification to db from modal
+@app.route("/admin/registerUni/addUni", methods = ['POST'])   #addding  to db from modal
 def registerUniversity():
 	getUniName = request.form['uniName']
 
@@ -235,7 +229,7 @@ def registerUniversity():
 	db.universities.insert_one(addToDB)
 	return redirect(url_for('registerUni'))
 
-@app.route("/admin/registerUni/addUniAdmin", methods = ['POST'])   #addding Qualification to db from modal
+@app.route("/admin/registerUni/addUniAdmin", methods = ['POST'])   #addding  to db from modal
 def addUniAdmin():
 	addUniAdminBtn = request.form['uniId']
 	foundUni = {"_id": ObjectId(addUniAdminBtn)}
@@ -261,6 +255,38 @@ def addUniAdmin():
 
 	db.universities.update(addUniAdminId, addToDB)
 	return redirect(url_for('registerUni'))
+
+#addProgramme.html
+@app.route("/admin/recordProgramme") #loading programmes from db
+def recordProgramme():
+	uniName = session.get('uniNameForAdmin')
+	uniItself = db.universities.find_one({"uniName": uniName})
+	return render_template('addProgramme.html', uni=uniItself)
+
+@app.route("/admin/recordProgramme/addProgram", methods = ['POST'])   #addding Program for University to db from modal
+def addProgramme():
+	uniName = session.get('uniNameForAdmin')
+	foundUni = {"uniName": uniName}
+	uniItself = db.universities.find_one = (foundUni)
+
+	programName = request.form['progName']
+	programDescription = request.form['progDescription']
+	programDate = request.form['closingDate']
+
+	addToDB = {
+		"$push":
+			{"programs":
+				{
+					"programName": programName,
+					"programDescription": programDescription,
+					"closingDate": programDate,
+				}
+
+			}
+	}
+
+	db.universities.update(uniItself, addToDB)
+	return redirect(url_for('recordProgramme'))
 
 
 # only to create sample data in database

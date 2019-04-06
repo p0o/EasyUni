@@ -15,12 +15,17 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <a class="navbar-brand" href="./">EasyUni</a>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <!-- add navigation links here-->
+            <li class="nav-item active">
+                <a class="nav-link" href="recordProgramme">Record Programme<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Review Applications<span class="sr-only"></span></a>
+            </li>
         </ul>
         <a href="logoutAdmin"><input type="submit" class="btn btn-danger my-2 my-sm-0" name="logoutAdmin" value="Log out"></a>
     </div>
 </nav>
-<br><br>
+<br>
 <div class="container">
     <div class="row">
         <div class="jumbotron col-md-6">
@@ -34,31 +39,56 @@
             <h3 class="lead">Email: <b>{{session.get('adminEmailForAdmin')}}</b></h3>
         </div>
     </div>
-    <div class="row">
-        <!-- Button trigger modal -->
-        <center><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Record Programme</button></center>
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Register University</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+</div>
+<!-- Button trigger modal -->
+<center><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Record Programme</button></center>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Record Programme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="recordProgramme/addProgram">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Programme Name</label>
+                        <input type="text" class="form-control" name="progName" required>
                     </div>
-                    <form method="post" action="registerUni/addUni">
-                        <div class="modal-body">
-                            <input name="uniName" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="University Name">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit" class="btn btn-primary" value="Add Programme">
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <label>Programme Description</label>
+                        <textarea class="form-control" rows="3" name="progDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="date" name="closingDate" id="example-date-input" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Add Programme">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<div class="container">
+    <div class="row">
+    {% for program in uni.programs %}
+        <div class="col-sm-4" style="margin-bottom: 3em;">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{program.programName}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{program.closingDate}}</h6>
+                    <p class="card-text">{{program.programDescription}}</p>
+                    <a href="#" class="btn btn-danger">Delete Programme</a>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 
