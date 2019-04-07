@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 
 import logging
 import bson
+import time
 from bson.son import SON
 
 app = Flask(__name__)
@@ -54,9 +55,13 @@ def show_programme():
 	universityId = request.args.get('universityId')
 	university = universities.find_one({'_id': bson.objectid.ObjectId(universityId)})
 	myProgramme = {}
+	logging.warning(programmeId)
 
-	for programme in university['programmes']:
-		if (programme['_id'] == bson.objectid.ObjectId(programmeId)):
+	for programme in university['programs']:
+		logging.warning('hhhh=>' + str(programme['programmeId']))
+		if (str(programme['programmeId']) == str(programmeId)):
+			logging.warning('GOOOT=>')
+			logging.warning(programme)
 			myProgramme = programme
 	return render_template('programme.html', programme=myProgramme, university=university)
 	
@@ -277,6 +282,7 @@ def addProgramme():
 		"$push":
 			{"programs":
 				{
+				    "programmeId": time.time(),
 					"programName": programName,
 					"programDescription": programDescription,
 					"closingDate": programDate,
@@ -294,47 +300,11 @@ def addProgramme():
 @app.route('/init')
 def addSampleData():
 	db.universities.insert_one({
-		'universityName': 'Help University',
-		'uniAdmins': [],
-		'programmes': [
-			{
-				'_id': bson.objectid.ObjectId(),
-				'programmeName': 'Bachelor of IT',
-				'description': 'Bachelor of IT is a great academic opportunity for students interested in computer science and career opportunities in programming and e-commerce.',
-				'closingDate': '12/03/2020'
-			},
-			{
-				'_id': bson.objectid.ObjectId(),
-				'programmeName': 'Bachelor of Business',
-				'description': 'Bachelor of Business is a great academic opportunity for students interested in learning business and career opportunities in executive positions and office admin.',
-				'closingDate': '12/05/2020'
-			},
-			{
-				'_id': bson.objectid.ObjectId(),
-				'programmeName': 'Bachelor of Marketing',
-				'description': 'Bachelor of Marketing is a great academic opportunity for students interested in markets, selling products and career opportunities in marketing and e-commerce.',
-				'closingDate': '12/01/2020'
-			},
-		]
+		'uniName': 'Help University',
+		'uniAdmins': [{'name': 'The Uni Admin', 'email': 'uniadmin@easyuni.com', 'username': 'myuniadmin', 'password': 'myuniadmin'}],
+	
 	});
-	db.universities.insert_one({
-		'universityName': 'Taylor University',
-		'uniAdmins': [],
-		'programmes': [
-			{
-				'_id': bson.objectid.ObjectId(),
-				'programmeName': 'Bachelor of Business',
-				'description': 'Bachelor of Business is a great academic opportunity for students interested in learning business and career opportunities in executive positions and office admin.',
-				'closingDate': '04/06/2020'
-			},
-			{
-				'_id': bson.objectid.ObjectId(),
-				'programmeName': 'Bachelor of Marketing',
-				'description': 'Bachelor of Marketing is a great academic opportunity for students interested in markets, selling products and career opportunities in marketing and e-commerce.',
-				'closingDate': '04/02/2020'
-			},
-		]
-	});
+	
 	return 'Sample collections created!'
 
 if __name__ == '__main__':
