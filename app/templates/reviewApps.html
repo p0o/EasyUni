@@ -77,14 +77,15 @@
 <br>
 <div class="container">
     <div class="row">
-    {% for program in uni.programs %}
+    {% for program in programs %}
         <div class="col-sm-4" style="margin-bottom: 3em;">
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{program.programName}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">{{program.closingDate}}</h6>
                     <p class="card-text">{{program.programDescription}}</p>
-                    <a href="#" class="btn btn-danger">Delete Programme</a>
+                    <hr />
+                    <p>Number of Applications: {{program.appsNum}}</p>
                 </div>
             </div>
         </div>

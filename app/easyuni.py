@@ -55,13 +55,10 @@ def show_programme():
 	universityId = request.args.get('universityId')
 	university = universities.find_one({'_id': bson.objectid.ObjectId(universityId)})
 	myProgramme = {}
-	logging.warning(programmeId)
 
 	for programme in university['programs']:
 		logging.warning('hhhh=>' + str(programme['programmeId']))
 		if (str(programme['programmeId']) == str(programmeId)):
-			logging.warning('GOOOT=>')
-			logging.warning(programme)
 			myProgramme = programme
 	return render_template('programme.html', programme=myProgramme, university=university)
 	
@@ -75,7 +72,7 @@ def apply():
 			'applicantId': session['username'],
 			'programmeId': programmeId
 		})
-		return 'Successfully applied'
+		return redirect(url_for('login_applicant'))
 	else :
 		return redirect(url_for('login_applicant'))
 
@@ -260,6 +257,21 @@ def addUniAdmin():
 
 	db.universities.update(addUniAdminId, addToDB)
 	return redirect(url_for('registerUni'))
+
+@app.route("/admin/reviewApps")
+def reviewApps():
+	uniName = session.get('uniNameForAdmin')
+	programs = db.universities.find_one({"uniName": uniName})["programs"]
+
+	for program in programs:
+		apps = list(db.universities.application.find({"programmeId": str(program['programmeId'])}))
+		logging.warning('this V')
+		logging.warning(apps)
+		program["appsNum"] = 0
+		if apps:
+			program["appsNum"] = len(apps)
+		program["apps"] = apps;
+	return render_template('reviewApps.html', programs=programs)
 
 #addProgramme.html
 @app.route("/admin/recordProgramme") #loading programmes from db
