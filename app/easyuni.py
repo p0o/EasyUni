@@ -72,7 +72,7 @@ def apply():
 			'applicantId': session['username'],
 			'programmeId': programmeId
 		})
-		return redirect(url_for('login_applicant'))
+		return redirect(url_for('home'));
 	else :
 		return redirect(url_for('login_applicant'))
 
@@ -258,6 +258,21 @@ def addUniAdmin():
 	db.universities.update(addUniAdminId, addToDB)
 	return redirect(url_for('registerUni'))
 
+@app.route("/admin/applications")
+def applications():
+	programmeId = request.args.get('id')
+	uniName = session.get('uniNameForAdmin')
+	apps = db.universities.application.find({"programmeId": str(programmeId)})
+
+	myApps = []
+	for app in apps:
+		user = db.users.find_one({"username": app['applicantId']})
+		# users which only applied for this programme
+		myApps.append(user)
+
+	return render_template("applications.html", apps = myApps)
+
+
 @app.route("/admin/reviewApps")
 def reviewApps():
 	uniName = session.get('uniNameForAdmin')
@@ -314,10 +329,20 @@ def addSampleData():
 	db.universities.insert_one({
 		'uniName': 'Help University',
 		'uniAdmins': [{'name': 'The Uni Admin', 'email': 'uniadmin@easyuni.com', 'username': 'myuniadmin', 'password': 'myuniadmin'}],
-	
 	});
 	
 	return 'Sample collections created!'
+
+@app.route('/init2')
+def addSampleDataForResults():
+	db.users.update({"username": "userTwo"}, {"$set": {"qualType": "Degree", "results": [
+		{"resultName": "result one", "score": "80"},
+		{"resultName": "result two", "score": "75"},
+		{"resultName": "result three", "score": "45"},
+		{"resultName": "result four", "score": "55"},
+		{"resultName": "result five", "score": "90"},
+	]}})
+	return 'Sample collection created!'
 
 if __name__ == '__main__':
 	app.run(debug=True)

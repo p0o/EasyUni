@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Record Programme</title>
+    <title>Applications</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 </head>
@@ -13,38 +13,59 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" href="./">EasyUni</a>
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-                <a class="nav-link" href="recordProgramme">Record Programme<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="reviewApps">Review Applications<span class="sr-only"></span></a>
-            </li>
-        </ul>
+        <a class="navbar-brand" href="./recordProgramme">Back</a>
+
         <a href="logoutAdmin"><input type="submit" class="btn btn-danger my-2 my-sm-0" name="logoutAdmin" value="Log out"></a>
     </div>
 </nav>
 <br>
 
+<!-- Modal -->
+
+
 
 <br>
 <div class="container">
     <div class="row">
-    {% for program in programs %}
+    {% for app in apps %}
         <div class="col-sm-4" style="margin-bottom: 3em;">
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">{{program.programName}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{program.closingDate}}</h6>
-                    <p class="card-text">{{program.programDescription}}</p>
+                    <h5 class="card-title">{{app.fullname}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{app.email}}</h6>
                     <hr />
-                    <p>Number of Applications: {{program.appsNum}}</p>
-                    <a href="applications?id={{program.programmeId}}" >View Applications</a>
+                    <p>Applicant's qualification: {{app.qualType}}</p>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tt">View Results</button>
                 </div>
             </div>
         </div>
-        {% endfor %}
+        <div class="modal fade" id="tt" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">View Results</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <ul>
+                    <li>Mathematics: 77</li>
+                    <li>Science: 70</li>
+                    <li>Biology: 89</li>
+                    <li>Chemistry: 54</li>
+
+
+                    {% for result in app.results %}
+
+                    <li>{{result.resultName}}: {{result.score}}</li>
+                    
+                    {% endfor %}
+                </ul>
+                 <button  class="btn btn-primary">Confirm Applicant</button>
+            </div>
+        </div>
+        </div>
+    {% endfor %}
     </div>
 </div>
 
