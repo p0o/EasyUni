@@ -41,7 +41,7 @@
             </div>
             <form method="post" action="registerUni/addUni">
                 <div class="modal-body">
-                    <input name="uniName" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="University Name">
+                    <input name="uniName" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="University Name" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -60,7 +60,6 @@
                 <img class="card-img-top" src="\static\uniPic(750-500).jpg" alt="Card image cap">
                 <div class="card-body">
                     <h5 class="card-title">{{ uni.uniName }}</h5>
-                    <p class="card-text">There will be some description of the University</p>
                     <!-- Button trigger modal  Add Admin button and modal-->
                     <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#id{{uni._id}}">Add Admin</button>
                     <!-- Modal -->

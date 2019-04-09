@@ -160,7 +160,7 @@ def login_admin():
 					uniAdminEmail = uniAdmin["email"]
 					uniAdminUsername = uniAdmin["username"]
 			session['adminNameForAdmin'] = uniAdminName #storing name of admin
-			session['adminEmailForAdmin'] = uniAdminEmail  # storing name of admin
+			session['adminEmailForAdmin'] = uniAdminEmail  # storing email of admin
 			session['adminUsernameForAdmin'] = uniAdminUsername  # storing name of admin
 			return redirect(url_for('adminHome'))
 		else:
