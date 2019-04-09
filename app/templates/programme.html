@@ -30,13 +30,13 @@
 
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h4>Programme Name: {{programme.programmeName}}</h4>
+    <h4>Programme Name: {{programme.programName}}</h4>
     <h5>In {{ university['universityName'] }}</h5>
 
-    <p>{{programme.description}}</p>
+    <p>{{programme.programDescription}}</p>
     <br />
     <b>The programme will close at: {{programme.closingDate}}</b><br><br>
-    <a href="/apply?id={{programme._id}}&universityId={{university['_id']}}" class="btn btn-primary">Apply for Programme</a>
+    <a href="/apply?id={{programme.programmeId}}&universityId={{university['_id']}}" class="btn btn-primary">Apply for Programme</a>
   </div>
 
   
