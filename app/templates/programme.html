@@ -9,7 +9,7 @@
 
  <body class="bg-light">
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-  <a class="navbar-brand mr-auto mr-lg-0" href="#">EasyUNI</a>
+  <a class="navbar-brand mr-auto mr-lg-0" href="/">EasyUNI</a>
   <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -30,13 +30,26 @@
 
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h4>Programme Name: {{programme.programName}}</h4>
-    <h5>In {{ university['universityName'] }}</h5>
+    <h5>Programme Name: {{programme.programName}}</h5>
+    <h5>In {{ university['uniName'] }}</h5>
 
-    <p>{{programme.programDescription}}</p>
+    <p>Learn about this program: <br />{{programme.programDescription}}</p>
     <br />
     <b>The programme will close at: {{programme.closingDate}}</b><br><br>
-    <a href="/apply?id={{programme.programmeId}}&universityId={{university['_id']}}" class="btn btn-primary">Apply for Programme</a>
+    {% if app_status != None %}
+      {% if app_status["confirmed"] == 1 %}
+        <button disabled>Congrats! Your Application for this Programme is confirmed</button>
+      {% else %}
+        <button disabled>Application in Progresss...</button>
+      {% endif %}
+
+    {% else %}
+
+      <a href="/apply?id={{programme.programmeId}}&universityId={{university['_id']}}" class="btn btn-primary">Apply for Programme</a>
+
+    {% endif %}
+
+    
   </div>
 
   

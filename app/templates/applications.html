@@ -49,19 +49,14 @@
                     </button>
                 </div>
                 <ul>
-                    <li>Mathematics: 77</li>
-                    <li>Science: 70</li>
-                    <li>Biology: 89</li>
-                    <li>Chemistry: 54</li>
-
-
                     {% for result in app.results %}
 
                     <li>{{result.resultName}}: {{result.score}}</li>
                     
                     {% endfor %}
                 </ul>
-                 <button  class="btn btn-primary">Confirm Applicant</button>
+                    <a href="/admin/confirmApp?appId={{app.app_id}}" style="width:100%;border-radius:0" class="btn btn-primary" >Confirm Applicant</a>
+                
             </div>
         </div>
         </div>
