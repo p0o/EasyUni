@@ -60,7 +60,11 @@ def show_programme():
 		logging.warning('hhhh=>' + str(programme['programmeId']))
 		if (str(programme['programmeId']) == str(programmeId)):
 			myProgramme = programme
-	return render_template('programme.html', programme=myProgramme, university=university)
+	#get the status of application for this applicant
+	applicant = session['username']
+	application_status = db.universities.application.find_one({"applicantId": applicant, "programmeId": programmeId});
+	logging.warning(application_status)
+	return render_template('programme.html', programme=myProgramme, university=university, app_status=application_status)
 	
 @app.route('/apply')
 def apply():
@@ -70,7 +74,8 @@ def apply():
 		university = universities.find_one({'_id': bson.objectid.ObjectId(universityId)})
 		universities.application.insert_one({
 			'applicantId': session['username'],
-			'programmeId': programmeId
+			'programmeId': programmeId,
+			'confirmed': 0
 		})
 		return redirect(url_for('home'));
 	else :
@@ -96,7 +101,15 @@ def signup_applicant():
 				'idType': request.form['idtype'],
 				'idNo': request.form['idno'],
 				'mobileNo': request.form['mobileno'],
-				'dateOfBirth': request.form['date_of_birth']	
+				'dateOfBirth': request.form['date_of_birth'],
+				'qualType': 'Degree',
+				'results': [
+					{"resultName": "result one", "score": "80"},
+					{"resultName": "result two", "score": "75"},
+					{"resultName": "result three", "score": "45"},
+					{"resultName": "result four", "score": "55"},
+					{"resultName": "result five", "score": "90"}
+				]
 			});
 			session['logged_in'] = True
 			return redirect(url_for('home'));
@@ -267,11 +280,19 @@ def applications():
 	myApps = []
 	for app in apps:
 		user = db.users.find_one({"username": app['applicantId']})
+		logging.warning(user['results'])
 		# users which only applied for this programme
+		user['app_id'] = app['_id']
 		myApps.append(user)
 
 	return render_template("applications.html", apps = myApps)
 
+@app.route('/admin/confirmApp')
+def confirmApps():
+	appId = request.args.get('appId')
+	# update the application to confirmed
+	db.universities.application.update({"_id": bson.objectid.ObjectId(appId)}, {"$set": {"confirmed": 1}});
+	return redirect(url_for("reviewApps"))
 
 @app.route("/admin/reviewApps")
 def reviewApps():
@@ -279,7 +300,7 @@ def reviewApps():
 	programs = db.universities.find_one({"uniName": uniName})["programs"]
 
 	for program in programs:
-		apps = list(db.universities.application.find({"programmeId": str(program['programmeId'])}))
+		apps = list(db.universities.application.find({"programmeId": str(program['programmeId']), "confirmed": 0}))
 		logging.warning('this V')
 		logging.warning(apps)
 		program["appsNum"] = 0
